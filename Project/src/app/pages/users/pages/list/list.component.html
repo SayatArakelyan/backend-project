@@ -1,0 +1,149 @@
+<div class="P-header-container">
+  <a [routerLink]="['', 'users', ManageTypesEnum.Add]" nz-button nzType="primary">Add</a>
+</div>
+<nz-table #nzTable
+          [nzScroll]="{ x: '1000px' }"
+          [nzData]="list$ | async"
+          nzShowSizeChanger
+          nzShowPagination>
+  <thead>
+  <tr>
+    <th nzCustomFilter> First Name
+      <nz-filter-trigger [(nzVisible)]="visibleFirstNameFilter" [nzActive]="userService.firstNameFilter.length > 0"
+                         [nzDropdownMenu]="firstNameFilter">
+        <i nz-icon nzType="search"></i>
+      </nz-filter-trigger>
+    </th>
+    <th nzCustomFilter> Last Name
+      <nz-filter-trigger [(nzVisible)]="visibleLastNameFilter" [nzActive]="userService.lastNameFilter.length > 0"
+                         [nzDropdownMenu]="lastNameFilter">
+        <i nz-icon nzType="search"></i>
+      </nz-filter-trigger>
+    </th>
+    <th nzCustomFilter> Email
+      <nz-filter-trigger [(nzVisible)]="visibleEmailFilter" [nzActive]="userService.emailFilter.length > 0"
+                         [nzDropdownMenu]="emailFilter">
+        <i nz-icon nzType="search"></i>
+      </nz-filter-trigger>
+    </th>
+    <th nzCustomFilter> Birth Date
+      <nz-filter-trigger [(nzVisible)]="visibleBirthDateFilter" [nzActive]="userService.birthDateFilter.length > 0"
+                         [nzDropdownMenu]="birthDateFilter">
+        <i nz-icon nzType="search"></i>
+      </nz-filter-trigger>
+    </th>
+    <th nzCustomFilter [nzFilters]="" [nzFilterFn]="true"> Status
+      <nz-filter-trigger [(nzVisible)]="visibleStatusFilter" [nzActive]="userService.statusFilter.length > 0"
+                         [nzDropdownMenu]="statusFilter">
+        <i nz-icon nzType="search"></i>
+      </nz-filter-trigger>
+    </th>
+    <th>Ip Address</th>
+    <th>Registration Date</th>
+    <th nzWidth="260px">
+      <div class="P-actions">
+        Actions
+        <button nz-button nzType="default" (click)="userService.resetAllFilters();initializeValues()">
+          <i nz-icon
+             nzType="reload"
+             nzTheme="outline"></i>
+          Reset
+        </button>
+      </div>
+    </th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let user of nzTable.data">
+    <td>{{ user.firstName }}</td>
+    <td>{{ user.lastName }}</td>
+    <td>{{ user.email }}</td>
+    <td>{{ user.birthDate | date: 'yyy-MM-dd'}}</td>
+    <td>{{ user.status }}</td>
+    <td>{{ user.ipAddress }}</td>
+    <td>{{ user.registrationDate }}</td>
+    <td>
+      <div class="P-actions">
+        <button nz-button nzType="primary" [routerLink]="['', 'users', ManageTypesEnum.Preview, user.id]">
+          Preview
+        </button>
+        <button nz-button nzType="default" [routerLink]="['', 'users', ManageTypesEnum.Edit, user.id]">Edit
+        </button>
+        <button
+          nzPopconfirmPlacement="right"
+          nzPopconfirmTitle="Are you sure delete this user?"
+          nz-popconfirm nz-button nzType="default"
+          nzDanger
+          (nzOnConfirm)="deleteUser(user.id)">
+          Delete
+        </button>
+      </div>
+    </td>
+  </tr>
+  </tbody>
+</nz-table>
+
+<nz-dropdown-menu #firstNameFilter="nzDropdownMenu">
+  <div class="ant-table-filter-dropdown">
+    <div class="search-box">
+      <input [(ngModel)]="userService.firstNameFilter" type="text" nz-input placeholder="Search first name"/>
+      <button nz-button nzSize="small" nzType="primary" (click)="initializeValues()" class="search-button">
+        Search
+      </button>
+      <button nz-button nzSize="small" (click)="userService.firstNameFilter = '';initializeValues()">Reset</button>
+    </div>
+  </div>
+</nz-dropdown-menu>
+
+<nz-dropdown-menu #lastNameFilter="nzDropdownMenu">
+  <div class="ant-table-filter-dropdown">
+    <div class="search-box">
+      <input [(ngModel)]="userService.firstNameFilter" type="text" nz-input placeholder="Search last name"/>
+      <button nz-button nzSize="small" nzType="primary" (click)="initializeValues()" class="search-button">
+        Search
+      </button>
+      <button nz-button nzSize="small" (click)="userService.firstNameFilter = '';initializeValues()">Reset</button>
+    </div>
+  </div>
+</nz-dropdown-menu>
+
+<nz-dropdown-menu #emailFilter="nzDropdownMenu">
+  <div class="ant-table-filter-dropdown">
+    <div class="search-box">
+      <input [(ngModel)]="userService.firstNameFilter" type="text" nz-input placeholder="Search email"/>
+      <button nz-button nzSize="small" nzType="primary" (click)="initializeValues()" class="search-button">
+        Search
+      </button>
+      <button nz-button nzSize="small" (click)="userService.firstNameFilter = '';initializeValues()">Reset</button>
+    </div>
+  </div>
+</nz-dropdown-menu>
+
+<nz-dropdown-menu #statusFilter="nzDropdownMenu">
+  <div class="ant-table-filter-dropdown">
+    <div class="search-box">
+      <nz-radio-group class="P-statuses-filter-container" [(ngModel)]="userService.statusFilter">
+        <label class="P-statuses-filter-item" nz-radio *ngFor="let status of helperService.userStatuses"
+               [nzValue]="status.value">{{ status.label }}</label>
+      </nz-radio-group>
+      <button nz-button nzSize="small" nzType="primary" (click)="initializeValues()" class="search-button">
+        Search
+      </button>
+      <button nz-button nzSize="small" (click)="userService.statusFilter = '';initializeValues()">Reset</button>
+    </div>
+  </div>
+</nz-dropdown-menu>
+
+<nz-dropdown-menu #birthDateFilter="nzDropdownMenu">
+  <div class="ant-table-filter-dropdown">
+    <div class="search-box P-birthdate-filter-container">
+      <nz-date-picker class="P-form-item-datepicker" [(ngModel)]="userService.birthDateFilter"></nz-date-picker>
+      <div class="P-birthdate-filter-actions">
+        <button nz-button nzSize="small" nzType="primary" (click)="initializeValues()" class="search-button">
+          Search
+        </button>
+        <button nz-button nzSize="small" (click)="userService.birthDateFilter = '';initializeValues()">Reset</button>
+      </div>
+    </div>
+  </div>
+</nz-dropdown-menu>

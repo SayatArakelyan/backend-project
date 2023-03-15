@@ -1,0 +1,40 @@
+.P-form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .P-form-line {
+    display: flex;
+    justify-content: space-between;
+    width: 98%;
+
+    .P-form-item {
+      width: 48%;
+
+      .P-form-item-datepicker {
+        width: 100%;
+      }
+    }
+  }
+
+  .P-line {
+    width: 100%;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .P-line-upload {
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+  }
+}
+
+.P-actions-container {
+  display: flex;
+  justify-content: flex-end;
+
+  button {
+    margin-right: 10px;
+  }
+}

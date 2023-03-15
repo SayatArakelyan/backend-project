@@ -1,0 +1,89 @@
+<nz-page-header nzTitle="Describe product" nzBackIcon *ngIf="router.url.includes(ManageTypesEnum.Preview)">
+  <nz-page-header-title>Describe product</nz-page-header-title>
+</nz-page-header>
+
+<form nz-form [nzLayout]="'vertical'" [formGroup]="form.formGroup">
+
+  <div class="P-form-container">
+    <div class="P-form-line">
+      <nz-form-item class="P-form-item">
+        <nz-form-label nzRequired>First Name</nz-form-label>
+        <nz-form-control nzErrorTip="Please input your first name!">
+          <input nz-input formControlName="firstName" placeholder="First Name"/>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item class="P-form-item">
+        <nz-form-label nzRequired>Last Name</nz-form-label>
+        <nz-form-control nzErrorTip="Please input your last name!">
+          <input nz-input formControlName="lastName" placeholder="Last Name"/>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div class="P-form-line">
+      <nz-form-item class="P-form-item">
+        <nz-form-label nzRequired>Email</nz-form-label>
+        <nz-form-control nzErrorTip="Please input your email!">
+          <input nz-input formControlName="email" placeholder="Email"/>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item class="P-form-item">
+        <nz-form-label [nzFor]="'field'" nzRequired>Status</nz-form-label>
+        <nz-form-control>
+          <nz-select formControlName="status" nzShowSearch nzAllowClear nzPlaceHolder="Status">
+            <nz-option *ngFor="let status of helperService.userStatuses"
+                       [nzLabel]="status.label" [nzValue]="status.value">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div class="P-form-line">
+      <nz-form-item class="P-form-item">
+        <nz-form-label nzRequired>Birth Date</nz-form-label>
+        <nz-form-control nzErrorTip="Please input your birth date!">
+          <nz-date-picker class="P-form-item-datepicker" formControlName="birthDate"></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div class="P-line"></div>
+
+    <div class="P-line-upload">
+      <nz-upload
+        [nzAction]="'http://localhost:3000/api/files/' + form.id.value"
+        nzListType="picture-card"
+        [(nzFileList)]="fileList"
+        [nzShowUploadList]="{showRemoveIcon: !router.url.includes(ManageTypesEnum.Preview), showPreviewIcon: true}"
+        [nzMultiple]="true"
+        [nzName]="'files'"
+        [nzShowButton]="!router.url.includes(ManageTypesEnum.Preview)"
+        [nzPreview]="handlePreview"
+        (nzChange)="fileUploadSuccess($event)">
+        <div>
+          <i nz-icon nzType="plus"></i>
+          <div [style.marginTop.px]="8">Upload</div>
+        </div>
+      </nz-upload>
+      <nz-modal [nzVisible]="previewVisible" [nzContent]="modalContent" [nzFooter]="null"
+                (nzOnCancel)="previewVisible = false">
+        <ng-template #modalContent>
+          <img [src]="previewImage" [ngStyle]="{ width: '100%' }"/>
+        </ng-template>
+      </nz-modal>
+    </div>
+
+  </div>
+</form>
+
+<div class="P-actions-container" *ngIf="!router.url.includes(ManageTypesEnum.Preview)">
+  <div class="P-actions">
+    <button nz-button [routerLink]="['', 'users', 'list']">Cancel</button>
+    <button nz-button nzType="primary" class="G-ml-5px" [disabled]="form.formGroup.invalid"
+            [nzLoading]="isManagingUser$ | async"
+            (click)="submitForm()">{{router.url.includes('add') ? 'Add' : 'Edit'}}</button>
+  </div>
+</div>
